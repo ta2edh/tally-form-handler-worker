@@ -1,0 +1,30 @@
+{
+  "name": "tally-discord-webhook-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker that sends Tally form responses to Discord webhooks",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "tail": "wrangler tail",
+    "test": "node test.js",
+    "test-curl": "curl -X POST http://localhost:8787 -H \"Content-Type: application/json\" -H \"Authorization: Bearer your-secret-auth-token-here\" -d @ornek.json"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "tally",
+    "discord",
+    "webhook",
+    "forms"
+  ],
+  "author": "Erdem Hacisalihoglu",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
