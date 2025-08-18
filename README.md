@@ -8,6 +8,7 @@ This Cloudflare Worker is used to send responses from Tally forms to Discord web
 - 🔐 Security with auth token
 - 📝 Multiple Tally form support
 - 🔗 Different Discord webhook for each form
+- 🌐 Dynamic webhook URL support via headers
 - 📊 Beautifully formatted Discord embed messages
 - 🛡️ CORS support
 - ✅ Error handling and validation
@@ -81,22 +82,38 @@ const FORM_WEBHOOKS = {
 
 ## Usage
 
-### Tally Webhook Configuration
+### Method 1: Using Configured Forms
+
+1. Add your form ID and webhook URL to `config.js`
+2. Configure Tally webhook to point to your worker
+3. Form responses will be automatically routed to the correct Discord channel
+
+### Method 2: Using Dynamic Webhook URL (New!)
+
+You can now send form responses to any Discord webhook without pre-configuring them:
+
+1. Configure Tally webhook to point to your worker
+2. Add `X-Webhook-URL` header with the Discord webhook URL
+3. No need to configure the form in `config.js`
+
+#### Tally Webhook Configuration (Dynamic)
 
 1. Go to your form on Tally.so
 2. Settings > Integrations > Webhooks
 3. Add your Worker URL: `https://your-worker.your-subdomain.workers.dev`
-4. Select POST method
-5. Activate the webhook
+4. Add custom header: `X-Webhook-URL` with value: `https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN`
+5. Select POST method
+6. Activate the webhook
 
 ### Testing
 
-To test your worker, send a sample payload with auth token:
+To test with dynamic webhook URL:
 
 ```bash
 curl -X POST https://your-worker.your-subdomain.workers.dev \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-auth-token-here" \
+  -H "X-Webhook-URL: https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN" \
   -d @example.json
 ```
 
@@ -117,7 +134,10 @@ Sends Tally form responses to Discord.
 ```
 Content-Type: application/json
 Authorization: Bearer your-secret-auth-token-here
+X-Webhook-URL: https://discord.com/api/webhooks/ID/TOKEN (optional)
 ```
+
+**Note:** If `X-Webhook-URL` header is provided, it will override any configured webhook for the form ID.
 
 #### Request Body
 ```json
@@ -219,7 +239,12 @@ DEBUG = "false"
 
 ### Form ID not found
 - Check if your form ID is defined in the `FORM_WEBHOOKS` object
+- **OR** use the `X-Webhook-URL` header to bypass configuration
 - Make sure the form ID is correct
+
+### Invalid webhook URL header
+- Make sure the webhook URL is a valid Discord webhook URL
+- URL must start with `https://discord.com/api/webhooks/` or `https://discordapp.com/api/webhooks/`
 
 ### Discord webhook not working
 - Make sure the webhook URL is correct

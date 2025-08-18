@@ -33,7 +33,7 @@ async function handleRequest(request) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Webhook-URL',
   };
 
   // Preflight request
@@ -107,33 +107,69 @@ async function handleRequest(request) {
 
     const formData = payload.data;
     
-    // Form ID check
-    if (!formData.formId) {
-      return new Response(JSON.stringify({
-        error: 'Missing form ID',
-        message: 'Form ID is required'
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders
-        }
-      });
-    }
+    // Check for webhook URL in header first
+    const headerWebhookUrl = request.headers.get('X-Webhook-URL');
+    let webhookUrl = null;
 
-    // Find webhook URL
-    const webhookUrl = FORM_WEBHOOKS[formData.formId];
-    if (!webhookUrl) {
-      return new Response(JSON.stringify({
-        error: 'Webhook not found',
-        message: `No webhook configured for form ID: ${formData.formId}`
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders
+    if (headerWebhookUrl) {
+      // Validate webhook URL format
+      try {
+        const url = new URL(headerWebhookUrl);
+        if (url.hostname === 'discord.com' || url.hostname === 'discordapp.com') {
+          webhookUrl = headerWebhookUrl;
+        } else {
+          return new Response(JSON.stringify({
+            error: 'Invalid webhook URL',
+            message: 'Webhook URL must be a valid Discord webhook URL'
+          }), {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders
+            }
+          });
         }
-      });
+      } catch (e) {
+        return new Response(JSON.stringify({
+          error: 'Invalid webhook URL',
+          message: 'Webhook URL format is invalid'
+        }), {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          }
+        });
+      }
+    } else {
+      // Fall back to configured webhook
+      if (!formData.formId) {
+        return new Response(JSON.stringify({
+          error: 'Missing form ID or webhook URL',
+          message: 'Either provide form ID (for configured forms) or X-Webhook-URL header'
+        }), {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          }
+        });
+      }
+
+      // Find webhook URL from config
+      webhookUrl = FORM_WEBHOOKS[formData.formId];
+      if (!webhookUrl) {
+        return new Response(JSON.stringify({
+          error: 'Webhook not found',
+          message: `No webhook configured for form ID: ${formData.formId}. You can also provide X-Webhook-URL header.`
+        }), {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          }
+        });
+      }
     }
 
     // Create and send Discord message
