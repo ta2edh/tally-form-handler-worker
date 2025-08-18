@@ -49,8 +49,8 @@ const FIELD_SETTINGS = {
   
   // Custom field formatters
   fieldFormatters: {
-    'question_fieldId': (value) => `📧 ${value}`,
-    'question_3yboYB': (value) => `📱 ${value}`
+    'question_fieldId1': (value) => `📧 ${value}`,
+    'question_fieldId2': (value) => `📱 ${value}`
   }
 };
 
@@ -70,4 +70,5 @@ export {
   CUSTOM_MESSAGES,
   FIELD_SETTINGS,
   RATE_LIMITS
+
 };
