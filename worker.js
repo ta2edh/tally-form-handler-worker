@@ -292,7 +292,7 @@ async function sendToDiscord(webhookUrl, formData) {
       case 'FILE_UPLOAD':
         if (Array.isArray(field.value)) {
           value = field.value.map(file => 
-            `📎 [${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
+            `[${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
           ).join('\n');
         }
         break;
@@ -300,41 +300,9 @@ async function sendToDiscord(webhookUrl, formData) {
       case 'SIGNATURE':
         if (Array.isArray(field.value)) {
           value = field.value.map(file => 
-            `✍️ [${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
+            `[${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
           ).join('\n');
         }
-        break;
-        
-      case 'RATING':
-        if (typeof field.value === 'number') {
-          value = `⭐ ${field.value}/5`;
-        }
-        break;
-        
-      case 'LINEAR_SCALE':
-        if (typeof field.value === 'number') {
-          value = `📊 ${field.value}/10`;
-        }
-        break;
-        
-      case 'INPUT_EMAIL':
-        value = `📧 ${field.value}`;
-        break;
-        
-      case 'INPUT_PHONE_NUMBER':
-        value = `📱 ${field.value}`;
-        break;
-        
-      case 'INPUT_LINK':
-        value = `🔗 ${field.value}`;
-        break;
-        
-      case 'INPUT_DATE':
-        value = `📅 ${field.value}`;
-        break;
-        
-      case 'INPUT_TIME':
-        value = `🕐 ${field.value}`;
         break;
         
       case 'PAYMENT':
@@ -426,3 +394,4 @@ function truncateText(text, maxLength) {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength - 3) + '...';
 }
+
