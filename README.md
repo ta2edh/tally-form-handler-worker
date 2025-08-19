@@ -88,7 +88,7 @@ const FORM_WEBHOOKS = {
 2. Configure Tally webhook to point to your worker
 3. Form responses will be automatically routed to the correct Discord channel
 
-### Method 2: Using Dynamic Webhook URL (New!)
+### Method 2: Using Dynamic Webhook URL
 
 You can now send form responses to any Discord webhook without pre-configuring them:
 
@@ -198,11 +198,41 @@ X-Webhook-URL: https://discord.com/api/webhooks/ID/TOKEN (optional)
 
 ## Supported Field Types
 
+### Text Input Fields
 - `INPUT_TEXT` - Text input
-- `INPUT_PHONE_NUMBER` - Phone number
-- `TEXTAREA` - Long text
-- `MULTIPLE_CHOICE` - Multiple choice (automatic option text conversion)
-- And other Tally field types
+- `TEXTAREA` - Long text area
+- `INPUT_NUMBER` - Number input
+- `INPUT_EMAIL` - Email input (📧)
+- `INPUT_PHONE_NUMBER` - Phone number (📱)
+- `INPUT_LINK` - Website/URL input (🔗)
+- `INPUT_DATE` - Date picker (📅)
+- `INPUT_TIME` - Time picker (🕐)
+
+### Choice Fields
+- `MULTIPLE_CHOICE` - Single selection from options
+- `CHECKBOXES` - Multiple selection checkboxes
+- `DROPDOWN` - Dropdown selection
+- `MULTI_SELECT` - Multi-select dropdown
+- `RANKING` - Drag and drop ranking
+- `MATRIX` - Matrix/table selection
+
+### Rating & Scale Fields
+- `RATING` - Star rating (⭐ /5)
+- `LINEAR_SCALE` - Linear scale (📊 /10)
+
+### File & Media Fields
+- `FILE_UPLOAD` - File uploads with clickable download links (📎)
+- `SIGNATURE` - Digital signature with clickable image links (✍️)
+
+### Payment Fields
+- `PAYMENT` - Payment information with formatted display:
+  - Price (💰), Currency (💱), Name (👤), Email (📧), Payment Link (🔗)
+
+### Special Fields
+- `HIDDEN_FIELDS` - Hidden form fields (🔒)
+- `CALCULATED_FIELDS` - Calculated values (🧮)
+
+All field types are automatically formatted with appropriate icons and styling for Discord embeds. File uploads and signatures include clickable download links.
 
 ## Security
 
