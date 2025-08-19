@@ -9,7 +9,7 @@
     "start": "wrangler dev",
     "tail": "wrangler tail",
     "test": "node test.js",
-    "test-curl": "curl -X POST http://localhost:8787 -H \"Content-Type: application/json\" -H \"Authorization: Bearer your-secret-auth-token-here\" -d @ornek.json"
+    "test-curl": "curl -X POST http://localhost:3000 -H \"Content-Type: application/json\" -H \"Authorization: Bearer your-secret-auth-token-here\" -H \"X-Webhook-URL: https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN\" -d @example.json"
   },
   "keywords": [
     "cloudflare",
