@@ -61,7 +61,7 @@ Edit the `FORM_WEBHOOKS` object in the `config.js` file:
 
 ```javascript
 const FORM_WEBHOOKS = {
-  'formId1': 'https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN',
+  'formId1': 'https://discord.com/api/webhooks/WEBHOOK_ID_1/WEBHOOK_TOKEN_1',
   'formId2': 'https://discord.com/api/webhooks/WEBHOOK_ID_2/WEBHOOK_TOKEN_2',
   'formId3': 'https://discord.com/api/webhooks/WEBHOOK_ID_3/WEBHOOK_TOKEN_3',
 };
@@ -115,13 +115,6 @@ curl -X POST https://your-worker.your-subdomain.workers.dev \
   -H "Authorization: Bearer your-secret-auth-token-here" \
   -H "X-Webhook-URL: https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN" \
   -d @example.json
-```
-
-Or use the test script:
-
-```bash
-# First, make the authToken in test.js the same as config.js
-node test.js
 ```
 
 ## API Endpoints
