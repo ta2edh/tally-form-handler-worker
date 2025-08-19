@@ -236,10 +236,134 @@ async function sendToDiscord(webhookUrl, formData) {
     let value = field.value;
     let label = field.label;
     
-    // Find option text for multiple choice
-    if (field.type === 'MULTIPLE_CHOICE' && field.options) {
-      const selectedOption = field.options.find(option => option.id === field.value);
-      value = selectedOption ? selectedOption.text : field.value;
+    // Handle different field types
+    switch (field.type) {
+      case 'MULTIPLE_CHOICE':
+        if (field.options && Array.isArray(field.value)) {
+          const selectedOptions = field.options.filter(option => field.value.includes(option.id));
+          value = selectedOptions.map(option => option.text).join(', ');
+        } else if (field.options && field.value) {
+          const selectedOption = field.options.find(option => option.id === field.value);
+          value = selectedOption ? selectedOption.text : field.value;
+        }
+        break;
+        
+      case 'CHECKBOXES':
+        if (Array.isArray(field.value) && field.options) {
+          const selectedOptions = field.options.filter(option => field.value.includes(option.id));
+          value = selectedOptions.map(option => option.text).join(', ');
+        } else if (typeof field.value === 'boolean') {
+          value = field.value ? '✅ Yes' : '❌ No';
+        }
+        break;
+        
+      case 'DROPDOWN':
+      case 'MULTI_SELECT':
+        if (field.options && Array.isArray(field.value)) {
+          const selectedOptions = field.options.filter(option => field.value.includes(option.id));
+          value = selectedOptions.map(option => option.text).join(', ');
+        }
+        break;
+        
+      case 'RANKING':
+        if (field.options && Array.isArray(field.value)) {
+          const rankedOptions = field.value.map((id, index) => {
+            const option = field.options.find(opt => opt.id === id);
+            return `${index + 1}. ${option ? option.text : id}`;
+          });
+          value = rankedOptions.join('\n');
+        }
+        break;
+        
+      case 'MATRIX':
+        if (field.rows && field.columns && typeof field.value === 'object') {
+          const matrixResults = [];
+          Object.entries(field.value).forEach(([rowId, columnIds]) => {
+            const row = field.rows.find(r => r.id === rowId);
+            if (Array.isArray(columnIds)) {
+              const columns = field.columns.filter(c => columnIds.includes(c.id));
+              matrixResults.push(`${row?.text || rowId}: ${columns.map(c => c.text).join(', ')}`);
+            }
+          });
+          value = matrixResults.join('\n');
+        }
+        break;
+        
+      case 'FILE_UPLOAD':
+        if (Array.isArray(field.value)) {
+          value = field.value.map(file => 
+            `📎 [${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
+          ).join('\n');
+        }
+        break;
+        
+      case 'SIGNATURE':
+        if (Array.isArray(field.value)) {
+          value = field.value.map(file => 
+            `✍️ [${file.name}](${file.url}) (${(file.size / 1024).toFixed(1)} KB)`
+          ).join('\n');
+        }
+        break;
+        
+      case 'RATING':
+        if (typeof field.value === 'number') {
+          value = `⭐ ${field.value}/5`;
+        }
+        break;
+        
+      case 'LINEAR_SCALE':
+        if (typeof field.value === 'number') {
+          value = `📊 ${field.value}/10`;
+        }
+        break;
+        
+      case 'INPUT_EMAIL':
+        value = `📧 ${field.value}`;
+        break;
+        
+      case 'INPUT_PHONE_NUMBER':
+        value = `📱 ${field.value}`;
+        break;
+        
+      case 'INPUT_LINK':
+        value = `🔗 ${field.value}`;
+        break;
+        
+      case 'INPUT_DATE':
+        value = `📅 ${field.value}`;
+        break;
+        
+      case 'INPUT_TIME':
+        value = `🕐 ${field.value}`;
+        break;
+        
+      case 'PAYMENT':
+        if (field.label.includes('price')) {
+          value = `💰 $${field.value}`;
+        } else if (field.label.includes('currency')) {
+          value = `💱 ${field.value}`;
+        } else if (field.label.includes('name')) {
+          value = `👤 ${field.value}`;
+        } else if (field.label.includes('email')) {
+          value = `📧 ${field.value}`;
+        } else if (field.label.includes('link')) {
+          value = `🔗 [Payment Link](${field.value})`;
+        } else {
+          value = `💳 ${field.value}`;
+        }
+        break;
+        
+      case 'HIDDEN_FIELDS':
+        value = `🔒 ${field.value}`;
+        break;
+        
+      case 'CALCULATED_FIELDS':
+        value = `🧮 ${field.value}`;
+        break;
+        
+      default:
+        // For all other types (INPUT_TEXT, TEXTAREA, INPUT_NUMBER), use value as-is
+        break;
     }
 
     // Use custom field label
