@@ -1,24 +1,24 @@
 name = "tally-discord-webhook"
 main = "worker.js"
-compatibility_date = "2023-12-01"
+compatibility_date = "2025-08-19"
 
-# Worker'ın hangi route'larda çalışacağını belirtir
-# Bu konfigürasyonu Cloudflare dashboard'dan da yapabilirsiniz
+# Specifies which routes the Worker will run on
+# You can also configure this from the Cloudflare dashboard
 # routes = ["example.com/api/tally-webhook"]
 
-# Environment variables (opsiyonel)
+# Environment variables (optional)
 # [vars]
 # ENVIRONMENT = "production"
 
-# Worker'ın hangi zone'da çalışacağını belirtir (opsiyonel)
+# Specifies which zone the Worker will run in (optional)
 # zone_id = "your-zone-id"
 
-# KV namespaces (opsiyonel - gelecekte form konfigürasyonları için kullanılabilir)
+# KV namespaces (optional - can be used for form configurations in the future)
 # [[kv_namespaces]]
 # binding = "FORM_CONFIGS"
 # id = "your-kv-namespace-id"
 
-# Durable Objects (opsiyonel)
+# Durable Objects (optional)
 # [[durable_objects.bindings]]
 # name = "FORM_COUNTER"
 # class_name = "FormCounter"
